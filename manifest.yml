@@ -1,10 +1,10 @@
 ---
 applications:
-- name: mean
-  host: mean-${random-word}
+- name: sts-chem
+  host: sts-chem
   memory: 256M
   services:
-  - mean-mongo
+    - mean-mongo
   env:
     NODE_ENV: cloud-foundry
 declared-services:
