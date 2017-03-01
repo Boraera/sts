@@ -1,6 +1,6 @@
 // See LICENSE.MD for license information.
 
-var app = angular.module('MEANapp', ['ngRoute', 'ngStorage']);
+var app = angular.module('MEANapp', ['ngRoute', 'ngStorage', 'ui.grid']);
 
 /*********************************
  Controllers
@@ -30,6 +30,9 @@ app.controller('HeaderController', function($scope, $localStorage, $sessionStora
     };
 });
 
+
+app.controller('AdministrationController', function($scope, $localStorage, $sessionStorage, $http, $location){});
+
 app.controller('HomeController', function($scope, $localStorage, $sessionStorage){});
 
 app.controller('LoginController', function($scope, $localStorage, $sessionStorage, $location, $http){
@@ -50,6 +53,7 @@ app.controller('LoginController', function($scope, $localStorage, $sessionStorag
                 // $localStorage persists data in browser's local storage (prevents data loss on page refresh)
                 $localStorage.status = true;
                 $localStorage.user = response;
+                $localStorage.admin = ($scope.loginForm.username == "Administrator");
                 $location.path('/');
             })
             .error(function(){
@@ -199,21 +203,111 @@ app.controller('AccountController', function($scope, $localStorage, $sessionStor
     };
 });
 
-app.controller('ProtectedController', function($scope, $location, $http){
+app.controller('ProtectedController', function($scope, $localStorage, $sessionStorage, $http, $location){
 
+  $scope.chemicals = [
+  ];
+    
+    // Create musician
+    $scope.addData = function(){
+        console.log("data upload:", $scope.newChemical);
+        $http({
+            method: 'POST',
+            url: '/protected/create',
+            data: {
+                    'chemical' : $scope.newChemical.chemical,
+                    'maxweight' : $scope.newChemical.maxweight,
+                    'location' : $scope.newChemical.location,
+                    'store' : $scope.newChemical.store
+                }
+            })
+            .success(function(response){
+                alert(response);
+                $location.path('/protected');
+                console.log("data upload to chemicals:", data);
+                updateTable();
+                updateTable
+            })
+            .error(function(response){
+                // When a string is returned
+                if(typeof response === 'string'){
+                    alert(response);
+                }
+                // When array is returned
+                else if (Array.isArray(response)){
+                    // More than one message returned in the array
+                    if(response.length > 1){
+                        var messages = [],
+                            allMessages;
+                        for (var i = response.length - 1; i >= 0; i--) {
+                            messages.push(response[i]['msg']);
+                            if(response.length == 0){
+                                allMessages = messages.join(", ");
+                                alert(allMessages);
+                                console.error(response);
+                            }
+                        }
+                    }
+                    // Single message returned in the array
+                    else{
+                        alert(response[0]['msg']);
+                        console.error(response);
+                    }
+                }
+                // When something else is returned
+                else{
+                    console.error(response);
+                    alert("See console for error.");
+                }
+            }
+        );
+        
+    };
+
+    // Drop inventory new data
+    $scope.dropData = function(){
+        var response = confirm("Are you sure you want to drop the data? This cannot be undone!");
+        
+        if(response == true){
+            //$scope.chemicals.splice(0,1);
+            $http({
+                method: 'POST',
+                url: '/protected/delete',
+                data: {
+                    'chemical': $scope.newChemical.chemical
+                }
+            })
+                .success(function(response){
+                    $localStorage.$reset();
+                    alert(response);
+                    $location.path('/protected');
+                })
+                .error(function(response){
+                    alert(response);
+                }
+            );
+            $scope.newChemical.chemical = "";
+            $scope.newChemical.maxweight = "";
+            $scope.newChemical.location = "";
+            $scope.newChemical.store  = "";
+        }
+        
+    };
+    
     $http({
         method: 'GET',
         url: '/protected'
     })
         .success(function(response){
-            $scope.message = response;
+            $scope.chemicals = response;
+            console.log($scope.chemicals);
         })
         .error(function(response){
             alert(response);
-            $location.path('/account/login');
+            $location.path('/protected');
         }
     );
-
+    
 });
 
 /*********************************
@@ -246,6 +340,12 @@ app.config(function($routeProvider) {
         when('/account/create', {
             templateUrl: 'views/create_account.html',
             controller: 'CreateAccountController'
+        }).
+
+		//Admin
+        when('/admin', {
+            templateUrl: 'views/admin.html',
+            controller: 'AdministrationController'
         }).
 
         //Protected page

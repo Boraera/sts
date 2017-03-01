@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/IBM-Bluemix/Nodejs-MEAN-Stack",
   "dependencies": {
+	"angular-ui-grid": "^4.0.1",
     "bcrypt": "^0.8.5",
     "body-parser": "^1.14.1",
     "cf-deployment-tracker-client": "0.0.8",

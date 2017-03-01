@@ -20,8 +20,8 @@ var express = require('express'),// server middleware
     cfenv = require('cfenv'),// Cloud Foundry Environment Variables
     appEnv = cfenv.getAppEnv(),// Grab environment variables
 
-    User = require('./server/models/user.model');
-    
+    User = require('./server/models/user.model'),
+    Chemical = require('./server/models/chemical.model');
 
 /********************************
 Local Environment Variables
@@ -201,6 +201,7 @@ app.post('/account/create', function(req,res){
 
 });
 
+
 //Account deletion
 app.post('/account/delete', authorizeRequest, function(req, res){
 
@@ -291,8 +292,69 @@ function authorizeRequest(req, res, next) {
 }
 
 // Protected route requiring authorization to access.
-app.get('/protected', authorizeRequest, function(req, res){
-    res.send("This is a protected route only visible to authenticated users.");
+app.get('/protected', function(req, res){
+    Chemical.find({}, function(err, results){
+        return res.send(results);
+    });
+});
+
+//Chemical creation
+app.post('/protected/create', function(req,res){
+
+    // 1. Input validation. Front end validation exists, but this functions as a fail-safe
+    req.checkBody('chemical', 'Chemical name or id is required').notEmpty();
+    req.checkBody('maxweight', 'Max weight is required and must be in a valid form').notEmpty();
+    req.checkBody('location', 'Location is required').notEmpty();
+    req.checkBody('store', 'Store is required').notEmpty();
+
+    var errors = req.validationErrors(); // returns an array with results of validation check
+    if (errors) {
+        res.status(400).send(errors);
+        return;
+    }
+
+    // 3. Create new object that store's new chemical data
+    var chemical = new Chemical({
+        chemical: req.body.chemical,
+        maxweight: req.body.maxweight,
+        location: req.body.location,
+        store: req.body.store
+    });
+
+    // 4. Store the data in MongoDB
+    Chemical.findOne({ chemical: req.body.chemical }, function(err, existingChemical) {
+        if (existingChemical) {
+            return res.status(400).send('That chemical already exists. Please try a different chemical name or id.');
+        }
+        chemical.save(function(err) {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error saving new account (database error). Please try again.');
+                return;
+            }
+            res.status(200).send('Chemical added.');
+        });
+    });
+
+});
+
+//Table line deletion
+app.post('/protected/delete', function(req, res){
+    Chemical.remove({ chemical: req.body.chemical }, function(err) {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error deleting chemical.');
+            return;
+        }
+        req.session.destroy(function(err) {
+            if(err){
+                res.status(500).send('Error deleting chemical.');
+                console.log("Error deleting session: " + err);
+                return;
+            }
+            res.status(200).send('Chemical successfully deleted.');
+        });
+    });
 });
 
 /********************************

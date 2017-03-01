@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>App Name</title>
+    <title>Inventory</title>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="//bootswatch.com/cosmo/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/app.css">
+    <link rel="styleSheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.1/ui-grid.min.css"/>
 </head>
 <body ng-app="MEANapp">
     <nav class="navbar navbar-default" ng-controller="HeaderController">
@@ -16,16 +17,17 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">App Name</a>
+                <a class="navbar-brand" href="#">Inventory</a>
             </div>
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li><a href="#/">Home</a></li>
-                    <li><a href="#/protected" ng-show="user.status">User Content</a></li>
+                    <li><a href="#/protected" ng-show="user.status">Inventory table</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="#/account" ng-show="user.status">Account</a></li>
+                    <li><a href="#/admin" ng-show="user.admin">Admin </a></li>
                     <li><a href="#/account/login" ng-hide="user.status">Login</a></li>
                     <li><a href='' ng-click="logout()" ng-show="user.status">Logout</a></li>
                 </ul>
@@ -41,7 +43,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.3/angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.3/angular-route.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.6/ngStorage.min.js"></script>
-
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.0.1/ui-grid.min.js"></script>
+	
     <!--Bootstrap Features-->
     <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
