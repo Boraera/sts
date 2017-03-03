@@ -205,8 +205,9 @@ app.controller('AccountController', function($scope, $localStorage, $sessionStor
 
 app.controller('ProtectedController', function($scope, $localStorage, $sessionStorage, $http, $location){
 
-  $scope.chemicals = [
-  ];
+    $scope.chemicals = [];
+    $scope.newChemical = {};
+    updateData();
     
     // Create musician
     $scope.addData = function(){
@@ -224,9 +225,8 @@ app.controller('ProtectedController', function($scope, $localStorage, $sessionSt
             .success(function(response){
                 alert(response);
                 $location.path('/protected');
-                console.log("data upload to chemicals:", data);
-                updateTable();
-                updateTable
+                console.log("data upload to chemicals:", response.data);
+                updateData();
             })
             .error(function(response){
                 // When a string is returned
@@ -294,19 +294,45 @@ app.controller('ProtectedController', function($scope, $localStorage, $sessionSt
         
     };
     
-    $http({
-        method: 'GET',
-        url: '/protected'
-    })
-        .success(function(response){
-            $scope.chemicals = response;
-            console.log($scope.chemicals);
+    function updateData() {
+        $http({
+            method: 'GET',
+            url: '/protected'
         })
-        .error(function(response){
-            alert(response);
-            $location.path('/protected');
+            .success(function(response){
+                $scope.chemicals = response;
+                console.log($scope.chemicals);
+            })
+            .error(function(response){
+                alert(response);
+                $location.path('/protected');
+            }
+        );
+    }
+
+	$scope.startDictation = function () {
+
+        if (window.hasOwnProperty('webkitSpeechRecognition')) {
+
+            var recognition = new webkitSpeechRecognition();
+
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.lang = "en-US";
+            recognition.start();
+
+            recognition.onresult = function(e) {
+                $scope.newChemical.chemical = e.results[0][0].transcript;
+                recognition.stop();
+            };
+
+            recognition.onerror = function(e) {
+                recognition.stop();
+            }
+
         }
-    );
+    };
     
 });
 
