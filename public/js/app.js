@@ -325,6 +325,7 @@ app.controller('ProtectedController', function($scope, $localStorage, $sessionSt
             recognition.onresult = function(e) {
                 $scope.newChemical.chemical = e.results[0][0].transcript;
                 recognition.stop();
+                $scope.$apply();
             };
 
             recognition.onerror = function(e) {
