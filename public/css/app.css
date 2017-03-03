@@ -6,6 +6,20 @@ input.ng-invalid.ng-touched {
     border: 1px solid red;
 }
 
+.mic {
+    background-image: url("https://dl.dropboxusercontent.com/u/26906414/cdn/img/mic.png");
+    background-size: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: white;
+    border: 1px solid #cccccc;
+}
+
+.mic.recording {
+    background-image: url("https://dl.dropboxusercontent.com/u/26906414/cdn/img/mic2-animate.gif");
+    background-size: 29px;
+}
+
 .myGrid {
     width: 500px;
     height: 250px;

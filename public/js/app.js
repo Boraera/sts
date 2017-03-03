@@ -207,6 +207,7 @@ app.controller('ProtectedController', function($scope, $localStorage, $sessionSt
 
     $scope.chemicals = [];
     $scope.newChemical = {};
+    $scope.isRecording = false;
     updateData();
     
     // Create musician
@@ -313,6 +314,7 @@ app.controller('ProtectedController', function($scope, $localStorage, $sessionSt
 	$scope.startDictation = function () {
 
         if (window.hasOwnProperty('webkitSpeechRecognition')) {
+            $scope.isRecording = true;
 
             var recognition = new webkitSpeechRecognition();
 
@@ -323,12 +325,14 @@ app.controller('ProtectedController', function($scope, $localStorage, $sessionSt
             recognition.start();
 
             recognition.onresult = function(e) {
+                $scope.isRecording = false;
                 $scope.newChemical.chemical = e.results[0][0].transcript;
                 recognition.stop();
                 $scope.$apply();
             };
 
             recognition.onerror = function(e) {
+                $scope.isRecording = false;
                 recognition.stop();
             }
 

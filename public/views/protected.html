@@ -16,19 +16,19 @@
             <fieldset>
                 <div class="form-group">
                     <label for="inputChemical" class="col-lg-3 control-label">Chemical (name or id) </label>
-                    <div class="col-lg-7">
-                        <input type="text"
-                               class="form-control"
-                               id="inputChemical"
-                               ng-model="newChemical.chemical"
-                               required
-                               >
+                    <div class="col-lg-9">
+                        <div class="input-group">
+                            <input type="text"
+                                   class="form-control"
+                                   id="inputChemical"
+                                   ng-model="newChemical.chemical"
+                                   required
+                                   >
+                            <span class="input-group-btn">
+                                <button type="button" ng-click="startDictation()" class="btn mic" ng-class="{recording: isRecording}">&nbsp;</button>
+                            </span>
+                        </div>
                     </div>
-                    <div class="col-lg-2">
-                    <button type="button" ng-click="startDictation()" class="btn btn-default" aria-label="Left Align">
-                        <span class="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span>
-                    </button>
-                    </div>  
                 </div>
                 <div class="form-group">
                     <label for="inputMaxweight" class="col-lg-3 control-label">Quantity </label>
